@@ -5,11 +5,12 @@
       <map>
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/activity_main.xml" value="0.19114583333333332" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/film.xml" value="0.33611111111111114" />
-        <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/film_icon.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/film_icon.xml" value="0.75" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/film_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/fragment_list_film.xml" value="0.33" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/genre_disabled.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/genre_enabled.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/Admin/AndroidStudioProjects/movieSearch/app/src/main/res/layout/image_not_found.xml" value="1.25" />
       </map>
     </option>
   </component>

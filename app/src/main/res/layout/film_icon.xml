@@ -8,19 +8,21 @@
     app:cardElevation="1dp"
     app:cardUseCompatPadding="true">
 
+
+
     <ImageView
         android:id="@+id/IVFilm"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:background="@color/teal_200"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        android:background="#717171" />
+
 
     <TextView
         android:id="@+id/TVFilm"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:background="#80000000"
+        android:background="#66000000"
         android:gravity="center"
         android:text="TextView"
         android:textColor="#E1E1E1" />

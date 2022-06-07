@@ -25,7 +25,7 @@ class ConvertorPojoToAdapterRV(it: Films) {
         return listObjectGenre
     }
 
-    private fun allFilms(it: Films): ArrayList<ModelFilm> {//cоздать список моделей фильм
+    private fun allFilms(it: Films): ArrayList<ModelFilm> {//создать список моделей фильм
         val listFilm = ArrayList<ModelFilm>()
         for (film in it.films) {
             listFilm.add(

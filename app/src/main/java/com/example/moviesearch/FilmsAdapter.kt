@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.moviesearch.databinding.FilmIconBinding
 import com.example.moviesearch.databinding.GenreDisabledBinding
+import com.example.moviesearch.databinding.GenreEnabledBinding
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 import com.example.moviesearch.modelPojo.pojoModel.Films
+import com.squareup.picasso.Picasso
 
 class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -55,7 +57,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     false
                 )
             )
-            TYPE_FILM -> ModelGenreEnabledViewHolder(
+            TYPE_FILM -> ModelFilmViewHolder(
                 inflater.inflate(
                     R.layout.film_icon,
                     parent,
@@ -87,14 +89,14 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemCount(): Int {
         return with(listModelItemRV) {
-            listModelGenre.size
+            Log.i("Log", "${this.listModelFilm.size} size")
+            listModelFilm.size
         }
     }
 
     override fun getItemViewType(position: Int): Int {//определение типа
-        val modelGenre = listModelItemRV.listModelGenre[position]
-        val modelFilm = listModelItemRV.listModelFilm[position]
-        if (listModelItemRV.listModelGenre.size > position) {
+        if (listModelItemRV.listModelGenre.size < 0 ) {
+            val modelGenre = listModelItemRV.listModelGenre[position]
             when (modelGenre.type) {
                 TYPE_GENRE_ENABLED -> {
                     Log.i("Log", "TYPE_GENRE_ENABLED $position")
@@ -110,6 +112,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 }
             }
         } else {
+            val modelFilm = listModelItemRV.listModelFilm[position]
             when (modelFilm.type) {
                 TYPE_FILM -> {
                     Log.i("Log", "TYPE_FILM $position")
@@ -133,7 +136,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class ModelGenreEnabledViewHolder(private val view: View) :
         RecyclerView.ViewHolder(view) {  //VH Genre enabled
-        private val genreBinding = GenreDisabledBinding.bind(view)
+        private val genreBinding = GenreEnabledBinding.bind(view)
         fun bind(modelGenre: ModelGenre) {
             genreBinding.TVGenre.text = modelGenre.nameGenre
         }
@@ -142,6 +145,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class ModelFilmViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {  //VH Film
         private val filmIconBinding = FilmIconBinding.bind(view)
         fun bind(modelFilm: ModelFilm) {
+            Picasso.get().load(modelFilm.movieCoverImageURL).placeholder(R.drawable.image_not_found).centerCrop().fit().into(filmIconBinding.IVFilm)//загрузка фото из сети
             filmIconBinding.TVFilm.text = modelFilm.localName
         }
     }

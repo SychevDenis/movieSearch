@@ -1,6 +1,6 @@
 package com.example.weatherappcompose.data.api
 
-import com.example.moviesearch.models.pojoModel.Films
+import com.example.moviesearch.modelPojo.pojoModel.Films
 import retrofit2.Response
 import retrofit2.http.GET
 

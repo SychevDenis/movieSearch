@@ -7,6 +7,5 @@ data class ModelGenre(
     companion object {
         const val TYPE_GENRE_ENABLED = 100
         const val TYPE_GENRE_DISABLED = 101
-        const val TYPE_FILM = 201
     }
 }

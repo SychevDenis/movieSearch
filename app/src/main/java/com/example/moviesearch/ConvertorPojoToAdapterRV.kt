@@ -3,6 +3,7 @@ package com.example.moviesearch
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
+import com.example.moviesearch.modelAdapterRV.ModelLabel
 import com.example.moviesearch.modelPojo.pojoModel.Films
 
 class ConvertorPojoToAdapterRV(it: Films) {
@@ -45,9 +46,28 @@ class ConvertorPojoToAdapterRV(it: Films) {
         return listFilm
     }
 
-    private fun assemblyObjectForAdapter(it: Films): ModelItemRV { //сборка объекта для адаптера RV
+    private fun assemblyObjectForAdapter(it: Films): ArrayList<ModelItemRV> { //сборка объекта для адаптера RV
         val listGenre = allGenres(it)//получить список моделей жанров
         val listFilm = allFilms(it)//получить список моделей жанров
-        return ModelItemRV(listGenre, listFilm)//итоговый объект для отправки в адаптер
+        val listModelItemRV = ArrayList<ModelItemRV>()
+
+        listModelItemRV.add(
+            ModelItemRV(
+                ModelLabel("Жанры", ModelLabel.TYPE_LABEL)
+                , null, null))//добавить лэйбл жанры
+
+        for (modelGenre in listGenre) {
+            listModelItemRV.add(ModelItemRV(null, modelGenre, null))
+        }
+
+        listModelItemRV.add(
+            ModelItemRV(
+                ModelLabel("Фильмы", ModelLabel.TYPE_LABEL),
+                null, null))//добавить лэйбл фильмы
+
+        for (modelList in listFilm) {
+            listModelItemRV.add(ModelItemRV(null, null, modelList))
+        }
+        return listModelItemRV//итоговый объект для отправки в адаптер
     }
 }

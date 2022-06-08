@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.moviesearch.R
 import com.example.moviesearch.FilmsAdapter
 import com.example.moviesearch.databinding.ActivityMainBinding
@@ -32,7 +33,9 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("WrongConstant")
     private fun init() {
         binding.apply {
-            RWListFilms.layoutManager = GridLayoutManager(this@MainActivity, 1)
+            RWListFilms.layoutManager=StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
+           // RWListFilms.layoutManager = GridLayoutManager(this@MainActivity, 2)
+         //   StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL).apply {RWListFilms.layoutManager = this }
             RWListFilms.adapter = adapter
         }
     }

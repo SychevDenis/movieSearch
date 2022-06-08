@@ -13,14 +13,17 @@ import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 import com.example.moviesearch.modelPojo.pojoModel.Films
 import com.squareup.picasso.Picasso
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.example.moviesearch.databinding.LabelBinding
+import com.example.moviesearch.modelAdapterRV.ModelLabel
+
 
 class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
     fun getData(it: Films) {//чтение и конвертация данных
         listModelItemRV = ConvertorPojoToAdapterRV(it).modelItemRV
     }
 
-    private var listModelItemRV = ModelItemRV()
+    private var listModelItemRV = ArrayList<ModelItemRV>()
         //при изменении списка, перерерисоваем RV
         set(value) {
             field = value
@@ -28,18 +31,6 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             Log.i("Log", listModelItemRV.toString())
         }
 
-
-    //    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ModelGenreViewHolder {
-//        val layout = when (viewType) {
-//            TYPE_GENRE_DISABLED -> R.layout.genre_disabled
-//            TYPE_GENRE_ENABLED -> R.layout.genre_enabled
-//            else -> throw RuntimeException("Unknown view type: $viewType")
-//        }
-//        val view =
-//            LayoutInflater.from(parent.context)
-//                .inflate(layout, parent, false)
-//        return ModelGenreViewHolder(view)
-//    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
@@ -64,67 +55,97 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     false
                 )
             )
-
+            TYPE_LABEL -> ModelLabelViewHolder(
+                inflater.inflate(
+                    R.layout.label,
+                    parent,
+                    false
+                )
+            )
             else -> throw IllegalArgumentException("Unsupported layout") // in case populated with a model we don't know how to display.
         }
     }
-//    override fun onBindViewHolder(holder: ModelGenreViewHolder, position: Int) {
-//        holder.bind(listModelFilm[position])
-//    }
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int
+    ) {
+        //заполнение RV холдерами в 1 или 2 колонки
+        if (typeGenre(listModelItemRV[position]) || typeLabel(listModelItemRV[position]))
+        //если заполняем жанры или лэйблы, то
+        {
+            useOneColumn(holder)//использовать одну колонку
+        }
+
         val listModelItemRV = listModelItemRV
+
         when (holder) {
             is ModelGenreDisabledViewHolder -> {
-                holder.bind(listModelItemRV.listModelGenre[position])
+                listModelItemRV[position].modelGenre?.let { holder.bind(it) }
             }
             is ModelGenreEnabledViewHolder -> {
-                holder.bind(listModelItemRV.listModelGenre[position])
+                listModelItemRV[position].modelGenre?.let { holder.bind(it) }
             }
             is ModelFilmViewHolder -> {
-                holder.bind(listModelItemRV.listModelFilm[position])
+                listModelItemRV[position].modelFilm?.let { holder.bind(it) }
             }
+            is ModelLabelViewHolder ->
+                listModelItemRV[position].modelLabel?.let { holder.bind(it) }
         }
     }
 
     override fun getItemCount(): Int {
-        return with(listModelItemRV) {
-            Log.i("Log", "${this.listModelFilm.size} size")
-            listModelFilm.size
-        }
+        Log.i("Log", "size ListModelItemRV ${listModelItemRV.size}")
+        return listModelItemRV.size
+
     }
 
     override fun getItemViewType(position: Int): Int {//определение типа
-        if (listModelItemRV.listModelGenre.size < 0 ) {
-            val modelGenre = listModelItemRV.listModelGenre[position]
-            when (modelGenre.type) {
-                TYPE_GENRE_ENABLED -> {
-                    Log.i("Log", "TYPE_GENRE_ENABLED $position")
-                    return TYPE_GENRE_ENABLED
-
+        with(listModelItemRV[position]) {
+            when {
+                typeGenre(this) -> { //Жанр
+                    return when (modelGenre?.type) {
+                        TYPE_GENRE_ENABLED -> {
+                            Log.i("Log", "TYPE_GENRE_ENABLED $position")
+                            TYPE_GENRE_ENABLED
+                        }
+                        TYPE_GENRE_DISABLED -> {
+                            Log.i("Log", "TYPE_GENRE_DISABLED $position")
+                            TYPE_GENRE_DISABLED
+                        }
+                        else -> {
+                            throw IllegalArgumentException("Unknown genre type")
+                        }
+                    }
                 }
-                TYPE_GENRE_DISABLED -> {
-                    Log.i("Log", "TYPE_GENRE_DISABLED $position")
-                    return TYPE_GENRE_DISABLED
+                typeFilm(this) -> {//Фильм
+                    when (modelFilm?.type) {
+                        TYPE_FILM -> {
+                            Log.i("Log", "TYPE_FILM $position")
+                            return TYPE_FILM
+                        }
+                        else -> {
+                            throw IllegalArgumentException("Unknown film type")
+                        }
+                    }
+                }
+                typeLabel(this) -> {  //Лэйбл
+                    when (modelLabel?.type) {
+                        TYPE_LABEL -> {
+                            Log.i("Log", "TYPE_LABEL $position")
+                            return TYPE_LABEL
+                        }
+                        else -> {
+                            throw IllegalArgumentException("Unknown film type")
+                        }
+                    }
                 }
                 else -> {
-                    throw IllegalArgumentException("Unknown genre type")
-                }
-            }
-        } else {
-            val modelFilm = listModelItemRV.listModelFilm[position]
-            when (modelFilm.type) {
-                TYPE_FILM -> {
-                    Log.i("Log", "TYPE_FILM $position")
-                    return TYPE_FILM
-                }
-                else ->{
                     throw IllegalArgumentException("Unknown film type")
                 }
             }
         }
     }
-
 
     class ModelGenreDisabledViewHolder(private val view: View) :
         RecyclerView.ViewHolder(view) { //VH Genre disabled
@@ -139,82 +160,50 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val genreBinding = GenreEnabledBinding.bind(view)
         fun bind(modelGenre: ModelGenre) {
             genreBinding.TVGenre.text = modelGenre.nameGenre
+
         }
     }
 
     class ModelFilmViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {  //VH Film
         private val filmIconBinding = FilmIconBinding.bind(view)
         fun bind(modelFilm: ModelFilm) {
-            Picasso.get().load(modelFilm.movieCoverImageURL).placeholder(R.drawable.image_not_found).centerCrop().fit().into(filmIconBinding.IVFilm)//загрузка фото из сети
+            Picasso.get().load(modelFilm.movieCoverImageURL).placeholder(R.drawable.image_not_found)
+                .centerCrop().fit().into(filmIconBinding.IVFilm)//загрузка фото из сети
             filmIconBinding.TVFilm.text = modelFilm.localName
         }
+    }
+
+    class ModelLabelViewHolder(private val view: View) :
+        RecyclerView.ViewHolder(view) {  //VH Film
+        private val labelBinding = LabelBinding.bind(view)
+        fun bind(modelLabel: ModelLabel) {
+            labelBinding.TVLabel.text = modelLabel.text
+        }
+    }
+
+    private fun useOneColumn(holder: RecyclerView.ViewHolder) {//использовтаь одну колонку
+        val params: StaggeredGridLayoutManager.LayoutParams =
+            holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
+        params.isFullSpan = true //"растягиваем" делаем по одному элементу в списке
+        holder.itemView.layoutParams = params
+    }
+
+    private fun typeGenre(listModelItemRV: ModelItemRV): Boolean {//проверки типа
+        return listModelItemRV.modelGenre != null && listModelItemRV.modelFilm == null && listModelItemRV.modelLabel == null
+    }
+
+    private fun typeFilm(listModelItemRV: ModelItemRV): Boolean {
+        return listModelItemRV.modelGenre == null && listModelItemRV.modelFilm != null && listModelItemRV.modelLabel == null
+    }
+
+    private fun typeLabel(listModelItemRV: ModelItemRV): Boolean {
+        return listModelItemRV.modelGenre == null && listModelItemRV.modelFilm == null && listModelItemRV.modelLabel != null
     }
 
     companion object {
         const val TYPE_GENRE_ENABLED = 100
         const val TYPE_GENRE_DISABLED = 101
-        const val TYPE_FILM = 201
+        const val TYPE_FILM = 200
+        const val TYPE_LABEL = 300
     }
 }
-
-
-//    var filmsList = listOf<Films>()
-//        set(value) {
-//            field = value
-//            notifyDataSetChanged()
-//        }
-//
-//    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ShopItemViewHolder {
-//        val layout = when (viewType) {
-//            VIEW_TYPE_DISABLED -> R.layout.genre_disabled
-//            VIEW_TYPE_ENABLED -> R.layout.genre_enabled
-//            else -> throw RuntimeException("Unknown view type: $viewType")
-//        }
-//        val view = LayoutInflater.from(parent.context).inflate(layout, parent, false)
-//        return ShopItemViewHolder(view)
-//    }
-//
-//    override fun onBindViewHolder(viewHolder: ShopItemViewHolder, position: Int) {
-//        val shopItem = shopList[position]
-//        viewHolder.view.setOnLongClickListener {
-//            true
-//        }
-//        viewHolder.tvName.text = shopItem.name
-//    }
-//
-//    override fun onViewRecycled(viewHolder: ShopItemViewHolder) {
-//        super.onViewRecycled(viewHolder)
-//        viewHolder.tvName.text = ""
-//        viewHolder.tvName.setTextColor(
-//            ContextCompat.getColor(
-//                viewHolder.view.context,
-//                android.R.color.white
-//            )
-//        )
-//    }
-//
-//    override fun getItemCount(): Int {
-//        return shopList.size
-//    }
-//
-//    override fun getItemViewType(position: Int): Int {
-//        val item = shopList[position]
-//        return if (item.enabled) {
-//            VIEW_TYPE_ENABLED
-//        } else {
-//            VIEW_TYPE_DISABLED
-//        }
-//    }
-//
-//    class ShopItemViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-//        val tvName = view.findViewById<TextView>(R.id.textGenre)
-//    }
-//
-//    companion object {
-//
-//        const val VIEW_TYPE_ENABLED = 100
-//        const val VIEW_TYPE_DISABLED = 101
-//
-//        const val MAX_POOL_SIZE = 30
-//    }
-//}

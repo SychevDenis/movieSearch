@@ -73,7 +73,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         //заполнение RV холдерами в 1 или 2 колонки
         if (typeGenre(listModelItemRV[position]) || typeLabel(listModelItemRV[position]))
         //если заполняем жанры или лэйблы, то
-        {
+         {
             useOneColumn(holder)//использовать одну колонку
         }
 
@@ -81,7 +81,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         when (holder) {
             is ModelGenreDisabledViewHolder -> {
-                listModelItemRV[position].modelGenre?.let { holder.bind(it) }
+                listModelItemRV[position]. modelGenre?.let { holder.bind(it) }
             }
             is ModelGenreEnabledViewHolder -> {
                 listModelItemRV[position].modelGenre?.let { holder.bind(it) }
@@ -102,47 +102,42 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {//определение типа
         with(listModelItemRV[position]) {
-            when {
-                typeGenre(this) -> { //Жанр
-                    return when (modelGenre?.type) {
-                        TYPE_GENRE_ENABLED -> {
-                            Log.i("Log", "TYPE_GENRE_ENABLED $position")
-                            TYPE_GENRE_ENABLED
-                        }
-                        TYPE_GENRE_DISABLED -> {
-                            Log.i("Log", "TYPE_GENRE_DISABLED $position")
-                            TYPE_GENRE_DISABLED
-                        }
-                        else -> {
-                            throw IllegalArgumentException("Unknown genre type")
-                        }
+            if (typeGenre(this)) { //Жанр
+                when (modelGenre?.type) {
+                    TYPE_GENRE_ENABLED -> {
+                        Log.i("Log", "TYPE_GENRE_ENABLED $position")
+                        return TYPE_GENRE_ENABLED
+                    }
+                    TYPE_GENRE_DISABLED -> {
+                        Log.i("Log", "TYPE_GENRE_DISABLED $position")
+                        return TYPE_GENRE_DISABLED
+                    }
+                    else -> {
+                        throw IllegalArgumentException("Unknown genre type")
                     }
                 }
-                typeFilm(this) -> {//Фильм
-                    when (modelFilm?.type) {
-                        TYPE_FILM -> {
-                            Log.i("Log", "TYPE_FILM $position")
-                            return TYPE_FILM
-                        }
-                        else -> {
-                            throw IllegalArgumentException("Unknown film type")
-                        }
+            } else if (typeFilm(this)) {//Фильм
+                when (modelFilm?.type) {
+                    TYPE_FILM -> {
+                        Log.i("Log", "TYPE_FILM $position")
+                        return TYPE_FILM
+                    }
+                    else -> {
+                        throw IllegalArgumentException("Unknown film type")
                     }
                 }
-                typeLabel(this) -> {  //Лэйбл
-                    when (modelLabel?.type) {
-                        TYPE_LABEL -> {
-                            Log.i("Log", "TYPE_LABEL $position")
-                            return TYPE_LABEL
-                        }
-                        else -> {
-                            throw IllegalArgumentException("Unknown film type")
-                        }
+            } else if (typeLabel(this)) {  //Лэйбл
+                when (modelLabel?.type) {
+                    TYPE_LABEL -> {
+                        Log.i("Log", "TYPE_LABEL $position")
+                        return TYPE_LABEL
+                    }
+                    else -> {
+                        throw IllegalArgumentException("Unknown film type")
                     }
                 }
-                else -> {
-                    throw IllegalArgumentException("Unknown film type")
-                }
+            } else {
+                throw IllegalArgumentException("Unknown film type")
             }
         }
     }

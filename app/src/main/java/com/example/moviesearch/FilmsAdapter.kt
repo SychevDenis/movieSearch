@@ -1,35 +1,34 @@
 package com.example.moviesearch
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.moviesearch.databinding.FilmIconBinding
 import com.example.moviesearch.databinding.GenreDisabledBinding
 import com.example.moviesearch.databinding.GenreEnabledBinding
+import com.example.moviesearch.databinding.LabelBinding
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
-import com.example.moviesearch.modelPojo.pojoModel.Films
-import com.squareup.picasso.Picasso
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.example.moviesearch.databinding.LabelBinding
 import com.example.moviesearch.modelAdapterRV.ModelLabel
+import com.squareup.picasso.Picasso
 
 
 class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    fun getData(it: Films) {//чтение и конвертация данных
-        listModelItemRV = ConvertorPojoToAdapterRV(it).modelItemRV
-    }
+    var onModelItemRVClickListener: ((ModelItemRV, Int) -> Unit)? = null
 
-    private var listModelItemRV = ArrayList<ModelItemRV>()
+    var listModelItemRV = ArrayList<ModelItemRV>()
         //при изменении списка, перерерисоваем RV
         set(value) {
             field = value
             notifyDataSetChanged()
-            Log.i("Log", listModelItemRV.toString())
+          //  Log.i("Log", listModelItemRV.toString())
         }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -70,18 +69,20 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         holder: RecyclerView.ViewHolder,
         position: Int
     ) {
+        holder.itemView.setOnClickListener {
+            onModelItemRVClickListener?.invoke(listModelItemRV[position], position)
+        }
         //заполнение RV холдерами в 1 или 2 колонки
         if (typeGenre(listModelItemRV[position]) || typeLabel(listModelItemRV[position]))
         //если заполняем жанры или лэйблы, то
-         {
+        {
             useOneColumn(holder)//использовать одну колонку
         }
-
         val listModelItemRV = listModelItemRV
 
         when (holder) {
             is ModelGenreDisabledViewHolder -> {
-                listModelItemRV[position]. modelGenre?.let { holder.bind(it) }
+                listModelItemRV[position].modelGenre?.let { holder.bind(it) }
             }
             is ModelGenreEnabledViewHolder -> {
                 listModelItemRV[position].modelGenre?.let { holder.bind(it) }
@@ -95,7 +96,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        Log.i("Log", "size ListModelItemRV ${listModelItemRV.size}")
+     //   Log.i("Log", "size ListModelItemRV ${listModelItemRV.size}")
         return listModelItemRV.size
 
     }
@@ -105,11 +106,11 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             if (typeGenre(this)) { //Жанр
                 when (modelGenre?.type) {
                     TYPE_GENRE_ENABLED -> {
-                        Log.i("Log", "TYPE_GENRE_ENABLED $position")
+                      //  Log.i("Log", "TYPE_GENRE_ENABLED $position")
                         return TYPE_GENRE_ENABLED
                     }
                     TYPE_GENRE_DISABLED -> {
-                        Log.i("Log", "TYPE_GENRE_DISABLED $position")
+                    //    Log.i("Log", "TYPE_GENRE_DISABLED $position")
                         return TYPE_GENRE_DISABLED
                     }
                     else -> {
@@ -119,7 +120,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             } else if (typeFilm(this)) {//Фильм
                 when (modelFilm?.type) {
                     TYPE_FILM -> {
-                        Log.i("Log", "TYPE_FILM $position")
+                    //    Log.i("Log", "TYPE_FILM $position")
                         return TYPE_FILM
                     }
                     else -> {
@@ -129,7 +130,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             } else if (typeLabel(this)) {  //Лэйбл
                 when (modelLabel?.type) {
                     TYPE_LABEL -> {
-                        Log.i("Log", "TYPE_LABEL $position")
+                       // Log.i("Log", "TYPE_LABEL $position")
                         return TYPE_LABEL
                     }
                     else -> {
@@ -177,13 +178,12 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     private fun useOneColumn(holder: RecyclerView.ViewHolder) {//использовтаь одну колонку
-        val params: StaggeredGridLayoutManager.LayoutParams =
-            holder.itemView.layoutParams as StaggeredGridLayoutManager.LayoutParams
-        params.isFullSpan = true //"растягиваем" делаем по одному элементу в списке
+        val params: GridLayoutManager.LayoutParams = holder.itemView.layoutParams as GridLayoutManager.LayoutParams
         holder.itemView.layoutParams = params
     }
 
-    private fun typeGenre(listModelItemRV: ModelItemRV): Boolean {//проверки типа
+
+    private fun typeGenre(listModelItemRV: ModelItemRV): Boolean {//проверка типа
         return listModelItemRV.modelGenre != null && listModelItemRV.modelFilm == null && listModelItemRV.modelLabel == null
     }
 

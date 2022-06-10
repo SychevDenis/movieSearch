@@ -1,5 +1,6 @@
 package com.example.moviesearch
 
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
@@ -30,6 +31,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
 
             scopeMain.launch {//выполнить в главном потоке
                 val dataList = getDataListSort()//чтение данных
+                setBindingFragmentListFilms()//настаройка биндинга у FragmentListFilms
                 setViewAdapterRV(dataList)//отправка данных в адаптер
             }
         }
@@ -46,6 +48,23 @@ class PresenterFragmentList(context: FragmentListFilms) {
         return null
     }
 
+    private fun setBindingFragmentListFilms() {
+        val binding = view.binding()
+        binding.apply {
+            RWListFilms.layoutManager = GridLayoutManager(view.context, 2).apply {
+                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when (getViewAdapterRV().getItemViewType(position)) {
+                            FilmsAdapter.TYPE_FILM -> 1
+                            else -> 2
+                        }
+                    }
+                }
+            }
+            RWListFilms.adapter = getViewAdapterRV()
+        }
+    }
+
     fun onClickListener() { //при клике на объект в RV
         getViewAdapterRV().onModelItemRVClickListener = { modelItemRV, position ->
             getDataList().let {
@@ -54,6 +73,8 @@ class PresenterFragmentList(context: FragmentListFilms) {
                     type = onClickGenreDisabled(it, position)
                 } else if (getType(modelItemRV) == TYPE_GENRE_ENABLED) {
                     type = onClickGenreEnable(it, position)
+                } else if (getType(modelItemRV) == TYPE_FILM) {
+                    type = TYPE_FILM
                 }
                 val sort = sortListByGenre(position, type)
                 setViewAdapterRV(sort)//вывести данные в адаптер RV
@@ -135,8 +156,15 @@ class PresenterFragmentList(context: FragmentListFilms) {
             listSortByGenre.addAll(listFilms)
             setDataListSort(listSortByGenre)//записываем в объект сортировки
             return listSortByGenre
+        } else if (type == TYPE_GENRE_ENABLED) {
+            setDataListSort(list)
+            return getDataListSort()
+
+        } else if (type == TYPE_FILM) {
+            return getDataListSort()
         } else {
-            return list
+            //записываем в объект сортировки
+            return getDataListSort()
         }
     }
 

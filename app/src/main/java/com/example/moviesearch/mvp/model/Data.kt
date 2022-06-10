@@ -11,5 +11,4 @@ object Data {
             Log.i("Log", "Данные сохранены")
         }
     var listModeItemRVSort = ArrayList<ModelItemRV>()
-    var sort=""
 }

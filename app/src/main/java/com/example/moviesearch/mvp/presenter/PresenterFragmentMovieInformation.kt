@@ -35,12 +35,5 @@ class PresenterFragmentMovieInformation(
         binding.TVLocalNameMovieInformation.text =
             model.modelFilm?.name
     }
-//    private fun openFragment(position: Int) {
-//        val title = "Главная"
-//        view.openFragment.openFragment(
-//            position,
-//            PresenterFragmentList.TYPE_FRAGMENT_LIST_FILMS,
-//            title
-//        )
-//    }
+
 }

@@ -1,4 +1,4 @@
-package com.example.moviesearch
+package com.example.moviesearch.mvp.view
 
 import android.content.Context
 import android.os.Bundle
@@ -6,6 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.moviesearch.FilmsAdapter
+import com.example.moviesearch.OpenFragment
+import com.example.moviesearch.mvp.presenter.PresenterFragmentList
+import com.example.moviesearch.R
 import com.example.moviesearch.databinding.FragmentListFilmBinding
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 

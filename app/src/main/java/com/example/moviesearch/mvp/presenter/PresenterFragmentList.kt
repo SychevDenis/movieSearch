@@ -1,13 +1,16 @@
-package com.example.moviesearch
+package com.example.moviesearch.mvp.presenter
 
 import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.moviesearch.ConvertorPojoToAdapterRV
+import com.example.moviesearch.FilmsAdapter
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 import com.example.moviesearch.modelAdapterRV.ModelLabel
 import com.example.moviesearch.modelPojo.pojoModel.Films
 import com.example.moviesearch.mvp.model.Data
+import com.example.moviesearch.mvp.view.FragmentListFilms
 import com.example.weatherappcompose.data.repository.Repository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -81,17 +84,18 @@ class PresenterFragmentList(context: FragmentListFilms) {
                     Log.i("Log", position.toString())
                 }
                 val sort = sortListByGenre(position, type)
-
                 setViewAdapterRV(sort)//вывести данные в адаптер RV
             }
         }
     }
 
     private fun openFragment(position: Int) {
+        var title = ""
+        model.listModelItemRVSort[position].modelFilm?.localName?.let {title= it }
         view.openFragment.openFragment(
             position,
             TYPE_FRAGMENT_MOVIE_INFORMATION,
-            model.listModelItemRV[position].modelFilm?.localName
+            title
         )
     }
 

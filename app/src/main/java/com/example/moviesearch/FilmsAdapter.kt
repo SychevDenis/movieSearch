@@ -1,11 +1,12 @@
 package com.example.moviesearch
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.moviesearch.databinding.FilmIconBinding
 import com.example.moviesearch.databinding.GenreDisabledBinding
 import com.example.moviesearch.databinding.GenreEnabledBinding
@@ -22,10 +23,11 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var listModelItemRV = ArrayList<ModelItemRV>()
         //при изменении списка, перерерисоваем RV
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()
-          //  Log.i("Log", listModelItemRV.toString())
+            Log.i("Log", listModelItemRV.toString())
         }
 
 
@@ -102,42 +104,47 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun getItemViewType(position: Int): Int {//определение типа
         with(listModelItemRV[position]) {
-            if (typeGenre(this)) { //Жанр
-                when (modelGenre?.type) {
-                    TYPE_GENRE_ENABLED -> {
-                      //  Log.i("Log", "TYPE_GENRE_ENABLED $position")
-                        return TYPE_GENRE_ENABLED
-                    }
-                    TYPE_GENRE_DISABLED -> {
-                    //    Log.i("Log", "TYPE_GENRE_DISABLED $position")
-                        return TYPE_GENRE_DISABLED
-                    }
-                    else -> {
-                        throw RuntimeException("Unknown genre type")
-                    }
-                }
-            } else if (typeFilm(this)) {//Фильм
-                when (modelFilm?.type) {
-                    TYPE_FILM -> {
-                    //    Log.i("Log", "TYPE_FILM $position")
-                        return TYPE_FILM
-                    }
-                    else -> {
-                        throw RuntimeException("Unknown film type")
+            when {
+                typeGenre(this) -> { //Жанр
+                    return when (modelGenre?.type) {
+                        TYPE_GENRE_ENABLED -> {
+                            //  Log.i("Log", "TYPE_GENRE_ENABLED $position")
+                            TYPE_GENRE_ENABLED
+                        }
+                        TYPE_GENRE_DISABLED -> {
+                            //    Log.i("Log", "TYPE_GENRE_DISABLED $position")
+                            TYPE_GENRE_DISABLED
+                        }
+                        else -> {
+                            throw RuntimeException("Unknown genre type")
+                        }
                     }
                 }
-            } else if (typeLabel(this)) {  //Лэйбл
-                when (modelLabel?.type) {
-                    TYPE_LABEL -> {
-                       // Log.i("Log", "TYPE_LABEL $position")
-                        return TYPE_LABEL
-                    }
-                    else -> {
-                        throw RuntimeException("Unknown film type")
+                typeFilm(this) -> {//Фильм
+                    when (modelFilm?.type) {
+                        TYPE_FILM -> {
+                            //    Log.i("Log", "TYPE_FILM $position")
+                            return TYPE_FILM
+                        }
+                        else -> {
+                            throw RuntimeException("Unknown film type")
+                        }
                     }
                 }
-            } else {
-                throw RuntimeException("Unknown film type")
+                typeLabel(this) -> {  //Лэйбл
+                    when (modelLabel?.type) {
+                        TYPE_LABEL -> {
+                            // Log.i("Log", "TYPE_LABEL $position")
+                            return TYPE_LABEL
+                        }
+                        else -> {
+                            throw RuntimeException("Unknown film type")
+                        }
+                    }
+                }
+                else -> {
+                    throw RuntimeException("Unknown film type")
+                }
             }
         }
     }
@@ -158,7 +165,6 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         }
     }
-
     class ModelFilmViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {  //VH Film
         private val filmIconBinding = FilmIconBinding.bind(view)
         fun bind(modelFilm: ModelFilm) {

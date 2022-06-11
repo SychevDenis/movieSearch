@@ -10,5 +10,5 @@ object Data {
             field=value
             Log.i("Log", "Данные сохранены")
         }
-    var listModeItemRVSort = ArrayList<ModelItemRV>()
+    var listModelItemRVSort = ArrayList<ModelItemRV>()
 }

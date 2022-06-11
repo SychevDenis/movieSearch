@@ -61,7 +61,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                     false
                 )
             )
-            else -> throw IllegalArgumentException("Unsupported layout") // in case populated with a model we don't know how to display.
+            else -> throw RuntimeException("Unsupported layout") // in case populated with a model we don't know how to display.
         }
     }
 
@@ -96,7 +96,6 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-     //   Log.i("Log", "size ListModelItemRV ${listModelItemRV.size}")
         return listModelItemRV.size
 
     }
@@ -114,7 +113,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         return TYPE_GENRE_DISABLED
                     }
                     else -> {
-                        throw IllegalArgumentException("Unknown genre type")
+                        throw RuntimeException("Unknown genre type")
                     }
                 }
             } else if (typeFilm(this)) {//Фильм
@@ -124,7 +123,7 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         return TYPE_FILM
                     }
                     else -> {
-                        throw IllegalArgumentException("Unknown film type")
+                        throw RuntimeException("Unknown film type")
                     }
                 }
             } else if (typeLabel(this)) {  //Лэйбл
@@ -134,11 +133,11 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                         return TYPE_LABEL
                     }
                     else -> {
-                        throw IllegalArgumentException("Unknown film type")
+                        throw RuntimeException("Unknown film type")
                     }
                 }
             } else {
-                throw IllegalArgumentException("Unknown film type")
+                throw RuntimeException("Unknown film type")
             }
         }
     }
@@ -164,8 +163,8 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         private val filmIconBinding = FilmIconBinding.bind(view)
         fun bind(modelFilm: ModelFilm) {
             Picasso.get().load(modelFilm.movieCoverImageURL).placeholder(R.drawable.image_not_found)
-                .centerCrop().fit().into(filmIconBinding.IVFilm)//загрузка фото из сети
-            filmIconBinding.TVFilm.text = modelFilm.localName
+                .centerCrop().fit().into(filmIconBinding.IVFilmIcon)//загрузка фото из сети
+            filmIconBinding.TVFilmIcon.text = modelFilm.localName
         }
     }
 

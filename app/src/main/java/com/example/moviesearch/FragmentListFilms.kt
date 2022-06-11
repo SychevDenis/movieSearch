@@ -1,5 +1,6 @@
 package com.example.moviesearch
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,20 @@ import com.example.moviesearch.databinding.FragmentListFilmBinding
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 
 class FragmentListFilms : Fragment() {
+    lateinit var openFragment: OpenFragment
     private lateinit var binding: FragmentListFilmBinding
     private val adapter = FilmsAdapter()
-    private var presenter = PresenterFragmentList(this)
+    private lateinit var presenter : PresenterFragmentList
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is OpenFragment) {//проверка на реализацию интерфейса у активити
+            openFragment = context
+        } else {
+            throw RuntimeException("Activity must implement OpenFragmentMovieInformation")
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,16 +35,13 @@ class FragmentListFilms : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentListFilmBinding.bind(view)
-        init()
+        presenter = PresenterFragmentList(this)
     }
 
-    private fun init() {
-        presenter.init()//инициализация presenter
-        presenter.onClickListener() //установка с слушателя кликов
-    }
-    fun binding():FragmentListFilmBinding{
+    fun binding(): FragmentListFilmBinding {
         return binding
     }
+
     fun listAdapter(list: ArrayList<ModelItemRV>) {
         adapter.listModelItemRV = list
     }

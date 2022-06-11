@@ -1,5 +1,6 @@
 package com.example.moviesearch
 
+import android.util.Log
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.moviesearch.modelAdapterRV.ModelFilm
 import com.example.moviesearch.modelAdapterRV.ModelGenre
@@ -21,7 +22,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
     private val model = Data
     private var view = context
 
-    fun init() {
+    init {
         scope.launch {//выполнить не в главном потоке
             val resultApi = getResponseApiToSetData()//выполнить api запрос
             val convertResult =
@@ -35,6 +36,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
                 setViewAdapterRV(dataList)//отправка данных в адаптер
             }
         }
+        onClickListener()//установка слушателя
     }
 
     private suspend fun getResponseApiToSetData(): Films? {
@@ -65,7 +67,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
         }
     }
 
-    fun onClickListener() { //при клике на объект в RV
+    private fun onClickListener() { //при клике на объект в RV
         getViewAdapterRV().onModelItemRVClickListener = { modelItemRV, position ->
             getDataList().let {
                 var type = 0
@@ -75,13 +77,23 @@ class PresenterFragmentList(context: FragmentListFilms) {
                     type = onClickGenreEnable(it, position)
                 } else if (getType(modelItemRV) == TYPE_FILM) {
                     type = TYPE_FILM
+                    openFragment(position)
+                    Log.i("Log", position.toString())
                 }
                 val sort = sortListByGenre(position, type)
+
                 setViewAdapterRV(sort)//вывести данные в адаптер RV
             }
         }
     }
 
+    private fun openFragment(position: Int) {
+        view.openFragment.openFragment(
+            position,
+            TYPE_FRAGMENT_MOVIE_INFORMATION,
+            model.listModelItemRV[position].modelFilm?.localName
+        )
+    }
 
     private fun onClickGenreEnable(it: ArrayList<ModelItemRV>, position: Int): Int {
         it[position].modelGenre?.type =
@@ -124,7 +136,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
             if (modelLabel?.type == ModelLabel.TYPE_LABEL) {
                 return ModelLabel.TYPE_LABEL
             } else {
-                throw IllegalArgumentException("Unknown film type")
+                throw RuntimeException("Unknown film type")
             }
         }
     }
@@ -177,7 +189,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
 
     private fun setDataListSort(list: ArrayList<ModelItemRV>?) {
         list?.let {
-            model.listModeItemRVSort = list
+            model.listModelItemRVSort = list
         }
     }
 
@@ -189,7 +201,7 @@ class PresenterFragmentList(context: FragmentListFilms) {
 
     private fun getDataListSort(): ArrayList<ModelItemRV> {
         val list: ArrayList<ModelItemRV>?
-        list = model.listModeItemRVSort
+        list = model.listModelItemRVSort
         return list
     }
 
@@ -212,6 +224,8 @@ class PresenterFragmentList(context: FragmentListFilms) {
         const val TYPE_GENRE_DISABLED = 101
         const val TYPE_FILM = 200
         const val TYPE_LABEL = 300
+        const val TYPE_FRAGMENT_LIST_FILMS = 400
+        const val TYPE_FRAGMENT_MOVIE_INFORMATION = 401
 
     }
 }

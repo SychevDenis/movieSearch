@@ -3,6 +3,7 @@ package com.example.moviesearch.mvp.presenter
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.fragment.app.FragmentManager
 import com.example.moviesearch.R
 import com.example.moviesearch.mvp.view.FragmentListFilms
@@ -27,7 +28,7 @@ class PresenterActivity(context: MainActivity) {
     ) {
         when (fragmentType) {
             MainActivity.TYPE_FRAGMENT_MOVIE_INFORMATION -> {
-                editActionBar(supportActionBar, titleActionBar)
+                editActionBar(supportActionBar, titleActionBar, true)
                 position?.let {
                     supportFragmentManagerMovieInformation(supportFragmentManager, it)
                 }
@@ -35,7 +36,7 @@ class PresenterActivity(context: MainActivity) {
                 view.setTitle(titleActionBar)
             }
             MainActivity.TYPE_FRAGMENT_LIST_FILMS -> {
-                editActionBar(supportActionBar, view.getDefaultTitle())
+                editActionBar(supportActionBar, view.getDefaultTitle(), false)
                 supportFragmentManagerListFilms(supportFragmentManager)
                 view.setParamType(fragmentType)
                 view.setTitle(titleActionBar)
@@ -64,11 +65,14 @@ class PresenterActivity(context: MainActivity) {
 
     private fun editActionBar( //настройка экшен бара
         supportActionBar: androidx.appcompat.app.ActionBar?,
-        titleActionBar: String
+        titleActionBar: String,
+        buttonBack: Boolean
     ) {
         supportActionBar?.let {
             it.setBackgroundDrawable(ColorDrawable(Color.parseColor("#323232")))
             it.title = titleActionBar
+            it.setDisplayHomeAsUpEnabled(buttonBack)
+            it.setDisplayShowHomeEnabled(buttonBack)
         }
     }
 
@@ -76,6 +80,15 @@ class PresenterActivity(context: MainActivity) {
         supportActionBar: androidx.appcompat.app.ActionBar?,
         titleActionBar: String
     ) {
-        editActionBar(supportActionBar, titleActionBar)
+        editActionBar(supportActionBar, titleActionBar, false)
+    }
+
+    fun optionsItemSelected(item: MenuItem) {
+        if (item.itemId == android.R.id.home) {
+            view.onBackPressed()
+        }
     }
 }
+
+
+

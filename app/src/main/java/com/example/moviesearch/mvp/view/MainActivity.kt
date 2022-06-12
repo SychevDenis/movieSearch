@@ -1,6 +1,8 @@
 package com.example.moviesearch.mvp.view
 
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.example.moviesearch.OpenFragment
 import com.example.moviesearch.databinding.ActivityMainBinding
@@ -8,7 +10,7 @@ import com.example.moviesearch.mvp.presenter.PresenterActivity
 
 class MainActivity : AppCompatActivity(), OpenFragment {
     private lateinit var binding: ActivityMainBinding
-    private val defaultTitle="Главная"
+    private val defaultTitle = "Главная"
     private var paramPosition: Int? = null
     private var paramType: Int = TYPE_FRAGMENT_LIST_FILMS
     private var title: String = defaultTitle
@@ -23,6 +25,7 @@ class MainActivity : AppCompatActivity(), OpenFragment {
         presenterActivity.readSavedInstanceState(savedInstanceState)//чтение savedInstanceState
         openFragment(paramPosition, paramType, title)
     }
+
     fun getDefaultTitle(): String {
         return defaultTitle
     }
@@ -40,7 +43,6 @@ class MainActivity : AppCompatActivity(), OpenFragment {
         fragmentType: Int,
         titleActionBar: String
     ) {
-
         presenterActivity.openFragment(
             position,
             fragmentType,
@@ -53,13 +55,21 @@ class MainActivity : AppCompatActivity(), OpenFragment {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("KEY_TYPE", paramType)
+        Log.i("Logs",paramType.toString())
         outState.putString("KEY_TITLE", title)
+        Log.i("Logs",title)
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-        setTitle(defaultTitle)
+        title=defaultTitle
+        paramType=TYPE_FRAGMENT_LIST_FILMS
         presenterActivity.backPress(supportActionBar, defaultTitle)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        presenterActivity.optionsItemSelected(item)
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

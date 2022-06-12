@@ -30,8 +30,6 @@ class FilmsAdapter() : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             Log.i("Log", listModelItemRV.toString())
         }
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {

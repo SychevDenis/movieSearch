@@ -29,7 +29,10 @@ class PresenterFragmentMovieInformation(
         binding.TVDescriptionMovieInformation.text =
             model.modelFilm?.description
         binding.TVRatingMovieInformation.text =
-            "Рейтинг:  ${model.modelFilm?.rating.toString()}"
+            "Рейтинг:  ${model.modelFilm?.rating?.toString()}"
+        binding.TVRatingMovieInformation.text =
+            if (model.modelFilm?.rating != null) "Рейтинг:  ${model.modelFilm?.rating.toString()}"
+            else "Рейтинг неизвестен"
         binding.TVReleaseYearMovieInformation.text =
             "Год:  ${model.modelFilm?.releaseYear.toString()}"
         binding.TVLocalNameMovieInformation.text =

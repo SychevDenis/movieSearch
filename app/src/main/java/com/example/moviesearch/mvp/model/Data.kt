@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.moviesearch.modelAdapterRV.ModelItemRV
 
 object Data {
-    //  private val presenter= PresenterFragmentList()
     var listModelItemRV = ArrayList<ModelItemRV>()
         set(value) {
             field=value

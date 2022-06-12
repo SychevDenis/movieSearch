@@ -147,40 +147,45 @@ class PresenterFragmentList(context: FragmentListFilms) {
 
     private fun sortListByGenre(position: Int, type: Int): ArrayList<ModelItemRV> {
         val list = getDataList()//получение основного объекта лист Data
-        if (type == TYPE_GENRE_DISABLED) {//если сортировка вызвана от объекта типа TYPE_GENRE_DISABLED
-            setDataListSort(list)//записываем в объект сортировки основной объект
-            val listSort = getDataListSort()
+        when (type) {
+            TYPE_GENRE_DISABLED -> {//если сортировка вызвана от объекта типа TYPE_GENRE_DISABLED
+                setDataListSort(list)//записываем в объект сортировки основной объект
+                val listSort = getDataListSort()
 
-            val selectedGenre =
-                listSort[position].modelGenre?.nameGenre //имя выбранного жанра из Data
-            val listSortByGenre = ArrayList<ModelItemRV>()
-            val listNoFilms = ArrayList<ModelItemRV>()
-            val listFilms = ArrayList<ModelItemRV>()
-            for (model in listSort) {
-                if (getType(model) != TYPE_FILM) {
-                    listNoFilms.add(model)
-                } else {
-                    for (genre in model.modelFilm?.genres.orEmpty()) {//отсеивание фильмов по жанру
-                        if (genre == selectedGenre) {
-                            listFilms.add(model)
+                val selectedGenre =
+                    listSort[position].modelGenre?.nameGenre //имя выбранного жанра из Data
+                val listSortByGenre = ArrayList<ModelItemRV>()
+                val listNoFilms = ArrayList<ModelItemRV>()
+                val listFilms = ArrayList<ModelItemRV>()
+                for (model in listSort) {
+                    if (getType(model) != TYPE_FILM) {
+                        listNoFilms.add(model)
+                    } else {
+                        for (genre in model.modelFilm?.genres.orEmpty()) {//отсеивание фильмов по жанру
+                            if (genre == selectedGenre) {
+                                listFilms.add(model)
+                            }
                         }
                     }
                 }
+                listFilms.sortWith(compareBy { it.modelFilm?.localName })//сортировка по имени
+                listSortByGenre.addAll(listNoFilms)
+                listSortByGenre.addAll(listFilms)
+                setDataListSort(listSortByGenre)//записываем в объект сортировки
+                return listSortByGenre
             }
-            listFilms.sortWith(compareBy { it.modelFilm?.localName })//сортировка по имени
-            listSortByGenre.addAll(listNoFilms)
-            listSortByGenre.addAll(listFilms)
-            setDataListSort(listSortByGenre)//записываем в объект сортировки
-            return listSortByGenre
-        } else if (type == TYPE_GENRE_ENABLED) {
-            setDataListSort(list)
-            return getDataListSort()
+            TYPE_GENRE_ENABLED -> {
+                setDataListSort(list)
+                return getDataListSort()
 
-        } else if (type == TYPE_FILM) {
-            return getDataListSort()
-        } else {
-            //записываем в объект сортировки
-            return getDataListSort()
+            }
+            TYPE_FILM -> {
+                return getDataListSort()
+            }
+            else -> {
+                //записываем в объект сортировки
+                return getDataListSort()
+            }
         }
     }
 
